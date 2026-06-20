@@ -62,6 +62,18 @@ const token = jwt.sign(
             message: err.message
         });
     }
-};
 
-module.exports={registerUser,loginUser};
+};
+const getProfile=async(req,res)=>{
+    try{
+        const user=await User.findById(req.user.id).select("-password");
+        res.status(201).json(user);
+    }
+    catch(err){
+        res.status(500).json({
+            message: err.message
+        });
+    }
+}
+
+module.exports={registerUser,loginUser,getProfile};
