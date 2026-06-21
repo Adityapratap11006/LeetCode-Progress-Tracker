@@ -29,11 +29,90 @@ const addProblem = async (req, res) => {
 const getProblems = async (req, res) => {
     try {
 
-        const problems = await Problem.find({
+        const {difficulty,status,topic,search,sort,page,limit}=req.query;
+
+const filter={user:req.user.id};
+if(difficulty){
+    filter.difficulty=difficulty
+}
+if(status){
+    filter.status=status
+}
+if(search){
+    filter.title={
+        $regex:search,
+        $options:"i"
+    };
+}
+const pageNumber = parseInt(page) || 1;
+const limitNumber = parseInt(limit) || 5;
+const problems = await Problem.find(filter)
+    .sort(sort)
+    .skip((pageNumber - 1) * limitNumber)
+    .limit(limitNumber);
+res.status(200).json(problems);
+
+}catch(err){
+    res.status(500).json({
+            message: err.message
+        });
+}
+}
+const getStats = async (req, res) => {
+    try {
+
+        const totalProblems = await Problem.countDocuments({
             user: req.user.id
         });
 
-        res.status(200).json(problems);
+        const solvedProblems = await Problem.countDocuments({
+            user: req.user.id,
+            status: "Solved"
+        });
+
+        const attemptedProblems = await Problem.countDocuments({
+            user: req.user.id,
+            status: "Attempted"
+        });
+
+        const needReviewProblems = await Problem.countDocuments({
+            user: req.user.id,
+            status: "Need Review"
+        });
+
+        const easyProblems = await Problem.countDocuments({
+            user: req.user.id,
+            difficulty: "Easy"
+        });
+
+        const mediumProblems = await Problem.countDocuments({
+            user: req.user.id,
+            difficulty: "Medium"
+        });
+
+        const hardProblems = await Problem.countDocuments({
+            user: req.user.id,
+            difficulty: "Hard"
+        });
+        const problems = await Problem.find({
+    user: req.user.id
+});
+       const totalTimeSpent = problems.reduce(
+    (sum, problem) => sum + problem.timeSpentMinutes,
+    0
+);
+
+
+        res.status(200).json({
+            totalProblems,
+            solvedProblems,
+            attemptedProblems,
+            needReviewProblems,
+            easyProblems,
+            mediumProblems,
+            hardProblems,
+             totalTimeSpent
+        });
 
     } catch (err) {
         res.status(500).json({
@@ -97,5 +176,5 @@ const deleteProblem=async(req,res)=>{
 };
 module.exports = {
     addProblem,
-    getProblems,updateProblem,deleteProblem
+    getProblems,updateProblem,deleteProblem,getStats
 };

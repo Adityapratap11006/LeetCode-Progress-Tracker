@@ -4,8 +4,9 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const {
     addProblem,getProblems,updateProblem,
-    deleteProblem
+    deleteProblem,getStats
 } = require("../controllers/problemController");
+router.get("/stats", authMiddleware, getStats);
 router.post(
     "/",
     authMiddleware,
