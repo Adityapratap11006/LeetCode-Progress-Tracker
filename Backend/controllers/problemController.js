@@ -174,7 +174,51 @@ const deleteProblem=async(req,res)=>{
         });
     }
 };
+const getProblemById=async(req,res)=>{
+    try{
+const problem=await Problem.findById(req.params.id)
+ if (!problem) {
+            return res.status(404).json({
+                message: "Problem not found"
+            });
+        }
+
+
+if(problem.user.toString()!==req.user.id){
+    return res.status(403).json({
+    message: "Not authorized"
+});
+}
+res.status(200).json(problem);
+    }catch(error){
+         res.status(500).json({
+            message: error.message
+        });
+    }
+};
+const getStreak=async(req,res)=>{
+    try{
+const solvedProblems = await Problem.find({
+    user: req.user.id,
+    status: "Solved"
+},{
+    solvedAt:1,
+    _id:0
+});
+const dates = solvedProblems.map(problem =>
+    problem.solvedAt.toISOString().split("T")[0]
+);
+ const uniqueDates = [...new Set(dates)];
+
+        uniqueDates.sort();
+    }
+    catch(err){
+          res.status(500).json({
+            message: err.message
+        });
+    }
+}
 module.exports = {
     addProblem,
-    getProblems,updateProblem,deleteProblem,getStats
+    getProblems,updateProblem,deleteProblem,getStats,getProblemById
 };

@@ -4,7 +4,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const {
     addProblem,getProblems,updateProblem,
-    deleteProblem,getStats
+    deleteProblem,getStats,getProblemById
 } = require("../controllers/problemController");
 router.get("/stats", authMiddleware, getStats);
 router.post(
@@ -12,6 +12,7 @@ router.post(
     authMiddleware,
     addProblem
 );
+router.get("/:id", authMiddleware, getProblemById);
 router.delete("/:id",authMiddleware,deleteProblem)
 router.get("/",authMiddleware,getProblems);
 router.patch("/:id",authMiddleware,updateProblem)
