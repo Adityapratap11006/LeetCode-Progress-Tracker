@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Sparkles, Mail, Lock, LogIn, ArrowRight } from 'lucide-react'
+import { Mail, Lock, LogIn, ArrowRight } from 'lucide-react'
 import { login as loginApi } from '../services/authService'
 import { useAuth } from '../context/AuthContext'
+import { Logo } from '../components/Logo'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Card, CardContent } from '../components/ui/card'
-import AuroraBackground from '../components/AuroraBackground'
-import Particles from '../components/Particles'
 
 export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' })
@@ -24,7 +23,7 @@ export default function Login() {
     setLoading(true)
     try {
       const data = await loginApi(form)
-      login(data.token, { email: form.email })
+      login(data.token, data.user)
       navigate('/dashboard')
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed')
@@ -34,39 +33,25 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-algo-950 px-4 relative overflow-hidden">
-      <AuroraBackground />
-      <Particles count={30} />
-
+    <div className="min-h-screen flex items-center justify-center bg-base px-4">
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-        className="w-full max-w-sm relative z-10"
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-sm"
       >
         <div className="text-center mb-8">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
-            className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-bright to-indigo-bright flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-bright/25"
-          >
-            <Sparkles className="w-6 h-6 text-white" />
-          </motion.div>
+          <Logo size={48} className="mx-auto mb-4" />
           <h1 className="text-xl font-bold text-white">Welcome back</h1>
-          <p className="text-sm text-muted mt-1">Sign in to AlgoForge</p>
+          <p className="text-sm text-muted mt-1">Sign in to CodeTrackr</p>
         </div>
 
         <Card>
           <CardContent className="p-6">
             {error && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="mb-4 p-3 rounded-lg bg-danger/10 border border-danger/20 text-sm text-danger"
-              >
+              <div className="mb-4 p-3 rounded-lg bg-danger/10 border border-danger/20 text-sm text-danger">
                 {error}
-              </motion.div>
+              </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -101,10 +86,10 @@ export default function Login() {
 
             <p className="text-center text-sm text-muted mt-6">
               Don&apos;t have an account?{' '}
-              <Link to="/register" className="text-purple-glow hover:text-purple-bright transition-colors font-medium">Register</Link>
+              <Link to="/register" className="text-primary hover:text-primary-hover transition-colors font-medium">Register</Link>
             </p>
 
-            <div className="mt-4 pt-4 border-t border-glass-border">
+            <div className="mt-4 pt-4 border-t border-border">
               <Link to="/" className="flex items-center justify-center gap-1 text-xs text-muted hover:text-white transition-colors">
                 <ArrowRight className="w-3 h-3 rotate-180" />
                 Back to home

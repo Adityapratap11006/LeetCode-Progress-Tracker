@@ -2,14 +2,14 @@ import { forwardRef } from 'react'
 import { cn } from '../../lib/utils'
 
 const Card = forwardRef(({ className, children, ...props }, ref) => (
-  <div ref={ref} className={cn('glass-card glass-card-glow', className)} {...props}>
+  <div ref={ref} className={cn('card', className)} {...props}>
     {children}
   </div>
 ))
 Card.displayName = 'Card'
 
 const CardHeader = forwardRef(({ className, children, ...props }, ref) => (
-  <div ref={ref} className={cn('flex items-center justify-between px-6 py-5 border-b border-glass-border', className)} {...props}>
+  <div ref={ref} className={cn('flex items-center justify-between px-5 py-4 border-b border-border', className)} {...props}>
     {children}
   </div>
 ))
@@ -30,14 +30,14 @@ const CardDescription = forwardRef(({ className, children, ...props }, ref) => (
 CardDescription.displayName = 'CardDescription'
 
 const CardContent = forwardRef(({ className, children, ...props }, ref) => (
-  <div ref={ref} className={cn('p-6', className)} {...props}>
+  <div ref={ref} className={cn('p-5', className)} {...props}>
     {children}
   </div>
 ))
 CardContent.displayName = 'CardContent'
 
 const CardFooter = forwardRef(({ className, children, ...props }, ref) => (
-  <div ref={ref} className={cn('flex items-center px-6 py-4 border-t border-glass-border', className)} {...props}>
+  <div ref={ref} className={cn('flex items-center px-5 py-4 border-t border-border', className)} {...props}>
     {children}
   </div>
 ))

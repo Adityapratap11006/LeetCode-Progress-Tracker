@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, AlertCircle, CheckCircle2, X } from 'lucide-react'
+import { Plus, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { createProblem } from '../services/problemService'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
@@ -70,7 +70,7 @@ export default function AddProblemForm({ onClose, onSuccess }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}

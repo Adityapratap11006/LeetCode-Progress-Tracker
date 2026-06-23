@@ -48,8 +48,8 @@ function Chip({ label, active, onClick }) {
       onClick={onClick}
       className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border ${
         active
-          ? 'bg-purple-bright/12 text-purple-glow border-purple-bright/25'
-          : 'text-muted border-glass-border hover:text-white hover:bg-glass-hover'
+          ? 'bg-primary/10 text-primary border-primary/20'
+          : 'text-muted border-border hover:text-white hover:bg-hover'
       }`}
     >
       {label}
@@ -91,7 +91,9 @@ export default function Problems() {
     }
   }, [page, limit, sort, difficulty, status, search])
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchProblems() }, [fetchProblems])
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setPage(1) }, [difficulty, status, search, limit])
 
   const handleDelete = async (problem) => {
@@ -107,8 +109,7 @@ export default function Problems() {
   }
 
   return (
-    <div className="min-h-screen bg-algo-950 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
-      {/* Header */}
+    <div className="min-h-screen bg-base p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">Problems</h1>
@@ -150,7 +151,7 @@ export default function Problems() {
           {['All', 'Easy', 'Medium', 'Hard'].map((d) => (
             <Chip key={d} label={d === 'All' ? 'All' : d} active={difficulty === d} onClick={() => setDifficulty(d)} />
           ))}
-          <span className="w-px h-5 bg-glass-border self-center mx-1" />
+          <span className="w-px h-5 bg-border self-center mx-1" />
           {['All', 'Solved', 'Attempted', 'Need Review'].map((s) => (
             <Chip key={s} label={s === 'All' ? 'All Statuses' : s} active={status === s} onClick={() => setStatus(s)} />
           ))}
@@ -163,7 +164,7 @@ export default function Problems() {
           {loading ? (
             <div className="p-6 space-y-4">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-12 bg-glass rounded-lg animate-pulse" />
+                <div key={i} className="h-12 bg-hover rounded-lg animate-pulse" />
               ))}
             </div>
           ) : problems.length > 0 ? (
@@ -171,7 +172,7 @@ export default function Problems() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-glass-border">
+                    <tr className="border-b border-border">
                       <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Title</th>
                       <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Difficulty</th>
                       <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Status</th>
@@ -182,15 +183,15 @@ export default function Problems() {
                       <th className="text-right px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-glass-border">
+                  <tbody className="divide-y divide-border">
                     {problems.map((p) => (
-                      <tr key={p._id} className="group hover:bg-glass-hover transition-colors">
+                      <tr key={p._id} className="group hover:bg-hover transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2 max-w-[240px]">
                             <span className="text-sm font-medium text-white truncate">{p.title}</span>
                             {p.leetcodeLink && (
                               <a href={p.leetcodeLink} target="_blank" rel="noopener noreferrer"
-                                className="text-muted hover:text-purple-glow transition-colors shrink-0">
+                                className="text-muted hover:text-primary transition-colors shrink-0">
                                 <ExternalLink className="w-3.5 h-3.5" />
                               </a>
                             )}
@@ -206,7 +207,7 @@ export default function Problems() {
                           <div className="flex flex-wrap gap-1 max-w-[160px]">
                             {p.tags?.length > 0 ? (
                               p.tags.slice(0, 2).map((tag) => (
-                                <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-glass text-muted border border-glass-border">
+                                <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-hover text-muted border border-border">
                                   {tag}
                                 </span>
                               ))
@@ -223,11 +224,7 @@ export default function Problems() {
                         <td className="px-6 py-4 text-muted">{p.attemptCount || '—'}</td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-1">
-                            <Button
-                              variant="ghost" size="icon"
-                              onClick={() => setShowNotes(showNotes === p._id ? null : p._id)}
-                              title="Notes"
-                            >
+                            <Button variant="ghost" size="icon" onClick={() => setShowNotes(showNotes === p._id ? null : p._id)} title="Notes">
                               <FileText className="w-3.5 h-3.5" />
                             </Button>
                             <Button variant="ghost" size="icon" onClick={() => setEditProblem(p)} title="Edit">
@@ -250,9 +247,8 @@ export default function Problems() {
                 </table>
               </div>
 
-              {/* Notes Panel */}
               {showNotes && (
-                <div className="border-t border-glass-border px-6 py-4 bg-algo-900/50">
+                <div className="border-t border-border px-6 py-4 bg-secondary/50">
                   <p className="text-xs text-muted mb-1">Notes for <span className="text-white font-medium">{problems.find(p => p._id === showNotes)?.title}</span></p>
                   <p className="text-sm text-white">{problems.find(p => p._id === showNotes)?.notes || 'No notes added.'}</p>
                 </div>
@@ -274,7 +270,7 @@ export default function Problems() {
       <div className="md:hidden space-y-3">
         {loading ? (
           [...Array(4)].map((_, i) => (
-            <div key={i} className="h-28 bg-glass rounded-lg animate-pulse" />
+            <div key={i} className="h-28 bg-hover rounded-lg animate-pulse" />
           ))
         ) : problems.length > 0 ? (
           problems.map((p) => (
@@ -284,7 +280,7 @@ export default function Problems() {
                   <div className="flex items-center gap-1.5">
                     <span className="text-sm font-medium text-white truncate">{p.title}</span>
                     {p.leetcodeLink && (
-                      <a href={p.leetcodeLink} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-purple-glow shrink-0">
+                      <a href={p.leetcodeLink} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-primary shrink-0">
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
@@ -301,12 +297,7 @@ export default function Problems() {
                   <Button variant="ghost" size="icon" onClick={() => setEditProblem(p)} title="Edit">
                     <Edit3 className="w-3.5 h-3.5" />
                   </Button>
-                  <Button
-                    variant="ghost" size="icon"
-                    onClick={() => handleDelete(p)}
-                    className="hover:text-danger hover:bg-danger/10"
-                    disabled={deleting === p._id}
-                  >
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(p)} className="hover:text-danger hover:bg-danger/10" disabled={deleting === p._id}>
                     <Trash2 className={`w-3.5 h-3.5 ${deleting === p._id ? 'animate-spin' : ''}`} />
                   </Button>
                 </div>
@@ -319,14 +310,14 @@ export default function Problems() {
               {p.tags?.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2">
                   {p.tags.map((tag) => (
-                    <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-glass text-muted border border-glass-border">
+                    <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-hover text-muted border border-border">
                       {tag}
                     </span>
                   ))}
                 </div>
               )}
               {showNotes === p._id && (
-                <div className="mt-2 pt-2 border-t border-glass-border">
+                <div className="mt-2 pt-2 border-t border-border">
                   <p className="text-xs text-muted mb-1">Notes:</p>
                   <p className="text-xs text-white">{p.notes || 'No notes added.'}</p>
                 </div>
@@ -344,7 +335,6 @@ export default function Problems() {
         )}
       </div>
 
-      {/* Pagination */}
       {problems.length > 0 && (
         <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
           <div className="flex items-center gap-2">
@@ -367,7 +357,7 @@ export default function Problems() {
       )}
 
       {showAdd && <AddProblemForm onClose={() => setShowAdd(false)} onSuccess={fetchProblems} />}
-      {editProblem && <EditProblemForm problem={editProblem} onClose={() => setEditProblem(null)} onSuccess={fetchProblems} />}
+      {editProblem && <EditProblemForm key={editProblem._id} problem={editProblem} onClose={() => setEditProblem(null)} onSuccess={fetchProblems} />}
     </div>
   )
 }

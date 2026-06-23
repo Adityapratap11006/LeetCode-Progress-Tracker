@@ -30,21 +30,22 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (token) {
-      axios.get('/api/auth/profile')
-        .then(({ data }) => {
-          setUser(data)
-          localStorage.setItem('user', JSON.stringify(data))
-        })
-        .catch(() => {
-          localStorage.removeItem('token')
-          localStorage.removeItem('user')
-          setUser(null)
-        })
-        .finally(() => setLoading(false))
-    } else {
+    if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false)
+      return
     }
+    axios.get('/api/auth/profile')
+      .then(({ data }) => {
+        setUser(data)
+        localStorage.setItem('user', JSON.stringify(data))
+      })
+      .catch(() => {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        setUser(null)
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   const login = useCallback((token, userData) => {
@@ -66,6 +67,7 @@ export function AuthProvider({ children }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const ctx = useContext(AuthContext)
   if (!ctx) throw new Error('useAuth must be used within AuthProvider')

@@ -6,7 +6,7 @@ const DialogOverlay = forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-black/70 backdrop-blur-sm',
+      'fixed inset-0 z-50 bg-black/70',
       className,
     )}
     {...props}
@@ -19,7 +19,7 @@ const DialogContent = forwardRef(({ className, children, onClose, ...props }, re
     <div
       ref={ref}
       className={cn(
-        'relative w-full max-w-lg rounded-2xl border border-glass-border bg-algo-800/95 backdrop-blur-2xl shadow-2xl',
+        'relative w-full max-w-lg rounded-xl border border-border bg-surface shadow-xl',
         className,
       )}
       {...props}
@@ -27,7 +27,7 @@ const DialogContent = forwardRef(({ className, children, onClose, ...props }, re
       {onClose && (
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 rounded-lg text-muted hover:text-white hover:bg-glass-hover transition-colors z-10"
+          className="absolute top-4 right-4 p-1 rounded-lg text-muted hover:text-white hover:bg-hover transition-colors z-10"
         >
           <X className="w-4 h-4" />
         </button>
@@ -51,7 +51,7 @@ const DialogDescription = ({ className, ...props }) => (
 )
 
 const DialogFooter = ({ className, ...props }) => (
-  <div className={cn('flex items-center justify-end gap-3 px-6 py-4 border-t border-glass-border', className)} {...props} />
+  <div className={cn('flex items-center justify-end gap-3 px-6 py-4 border-t border-border', className)} {...props} />
 )
 
 export { DialogOverlay, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter }

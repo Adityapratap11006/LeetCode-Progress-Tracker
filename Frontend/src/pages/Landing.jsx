@@ -1,38 +1,41 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Sparkles, LayoutDashboard } from 'lucide-react'
+import { ArrowRight, LayoutDashboard, CheckCircle2, BarChart3, BookOpen, RefreshCw, TrendingUp } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import AuroraBackground from '../components/AuroraBackground'
-import Particles from '../components/Particles'
-import FeaturesSection from '../components/FeaturesSection'
-import PreviewSection from '../components/PreviewSection'
-import StatsSection from '../components/StatsSection'
-import TestimonialsSection from '../components/TestimonialsSection'
-import Footer from '../components/Footer'
+import { Logo } from '../components/Logo'
 import { Button } from '../components/ui/button'
+import { Card } from '../components/ui/card'
+
+const features = [
+  { icon: CheckCircle2, title: 'Problem Tracking', desc: 'Track every problem you solve with difficulty, tags, language, and time spent.' },
+  { icon: BarChart3, title: 'GitHub-style Heatmap', desc: 'Visualize your coding activity and identify consistency patterns over time.' },
+  { icon: BookOpen, title: 'Study Lists', desc: 'Organize problems into custom roadmaps with progress tracking.' },
+  { icon: RefreshCw, title: 'Revision System', desc: 'Spaced repetition helps you retain what you learn with smart scheduling.' },
+  { icon: TrendingUp, title: 'Analytics', desc: 'Deep insights into your performance, streaks, and problem-solving trends.' },
+]
+
+const stats = [
+  { label: 'Problems Tracked', value: '1.2K+' },
+  { label: 'Active Users', value: '5K+' },
+  { label: 'Longest Streak', value: '365d' },
+]
 
 export default function Landing() {
   const { user } = useAuth()
-  return (
-    <div className="relative min-h-screen bg-algo-950 overflow-hidden">
-      <AuroraBackground />
-      <Particles count={60} />
 
+  return (
+    <div className="min-h-screen bg-base">
       {/* Navbar */}
       <motion.nav
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="fixed top-0 left-0 right-0 z-40 bg-algo-950/70 backdrop-blur-xl border-b border-glass-border"
+        className="fixed top-0 left-0 right-0 z-40 bg-base/80 border-b border-border"
       >
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-bright to-indigo-bright flex items-center justify-center shadow-lg shadow-purple-bright/25">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <span className="text-sm font-bold text-white">AlgoForge</span>
+            <Logo size={32} />
+            <span className="text-sm font-bold text-white">CodeTrackr</span>
           </div>
           <div className="flex items-center gap-3">
             {user ? (
@@ -48,7 +51,7 @@ export default function Landing() {
                   <Button variant="ghost" size="sm">Sign In</Button>
                 </Link>
                 <Link to="/register">
-                  <Button size="sm" className="shadow-lg shadow-purple-bright/20">
+                  <Button size="sm">
                     Get Started <ArrowRight className="w-3.5 h-3.5" />
                   </Button>
                 </Link>
@@ -59,49 +62,45 @@ export default function Landing() {
       </motion.nav>
 
       {/* Hero */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 pt-14">
-        <div className="relative z-10 text-center max-w-4xl mx-auto">
+      <section className="min-h-screen flex items-center justify-center px-4 pt-14">
+        <div className="text-center max-w-3xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-bright/10 border border-purple-bright/20 text-xs text-purple-glow font-medium mb-6"
+            transition={{ duration: 0.8 }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs text-primary font-medium mb-6"
           >
-            <Sparkles className="w-3 h-3" />
-            Your DSA companion
+            Track • Solve • Improve
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
-            className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.1]"
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]"
           >
-            <span className="text-white">Forge</span>{' '}
-            <span className="text-gradient">consistency</span>
-            <br />
-            <span className="text-white">Master</span>{' '}
-            <span className="text-gradient">DSA</span>
+            <span className="text-white">Master DSA with</span>{' '}
+            <span className="text-primary">consistency</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className="text-muted text-sm md:text-base mt-6 max-w-xl mx-auto leading-relaxed"
           >
-            Track your LeetCode journey with beautiful analytics, streaks, study lists and smart revision. Build unstoppable momentum.
+            Track your coding journey, build study lists, maintain streaks, and revise intelligently with CodeTrackr.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 0.8, delay: 0.3 }}
             className="flex items-center justify-center gap-3 mt-8"
           >
             {user ? (
               <Link to="/dashboard">
-                <Button size="xl" className="shadow-lg shadow-purple-bright/30">
+                <Button size="xl">
                   <LayoutDashboard className="w-4 h-4" />
                   Go to Dashboard
                 </Button>
@@ -109,7 +108,7 @@ export default function Landing() {
             ) : (
               <>
                 <Link to="/register">
-                  <Button size="xl" className="shadow-lg shadow-purple-bright/30">
+                  <Button size="xl">
                     Get Started Free
                     <ArrowRight className="w-4 h-4" />
                   </Button>
@@ -123,32 +122,69 @@ export default function Landing() {
             )}
           </motion.div>
 
-          {/* Stats mini bar */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex items-center justify-center gap-8 mt-12 pt-8 border-t border-glass-border max-w-md mx-auto"
+            className="flex items-center justify-center gap-8 mt-12 pt-8 border-t border-border max-w-md mx-auto"
           >
-            {[
-              { label: 'Problems', value: '1.2K+' },
-              { label: 'Users', value: '5K+' },
-              { label: 'Streak Record', value: '365d' },
-            ].map((s) => (
+            {stats.map((s) => (
               <div key={s.label} className="text-center">
                 <p className="text-lg font-bold text-white">{s.value}</p>
-                <p className="text-[11px] text-muted">{s.label}</p>
+                <p className="text-xs text-muted">{s.label}</p>
               </div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      <FeaturesSection />
-      <PreviewSection />
-      <StatsSection />
-      <TestimonialsSection />
-      <Footer />
+      {/* Features */}
+      <section className="px-4 pb-24">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-2xl font-bold text-white">Everything you need to stay consistent</h2>
+            <p className="text-muted mt-3 text-sm max-w-xl mx-auto">
+              Built for developers who want to master DSA through structured practice and intelligent revision.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {features.map((f, i) => (
+              <motion.div
+                key={f.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+              >
+                <Card className="p-5 card-hover">
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                    <f.icon className="w-4 h-4 text-primary" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-white mb-1">{f.title}</h3>
+                  <p className="text-muted text-xs leading-relaxed">{f.desc}</p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border px-4 py-8">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Logo size={24} />
+            <span className="text-xs text-muted">CodeTrackr</span>
+          </div>
+          <span className="text-xs text-muted">Track • Solve • Improve</span>
+        </div>
+      </footer>
     </div>
   )
 }

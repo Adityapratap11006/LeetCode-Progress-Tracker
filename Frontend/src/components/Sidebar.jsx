@@ -6,6 +6,7 @@ import {
   LayoutDashboard, ListTodo, BookOpen, RefreshCw, BarChart3, Settings,
   LogOut, ChevronLeft, ChevronRight,
 } from 'lucide-react'
+import { Logo } from './Logo'
 
 const links = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -23,17 +24,13 @@ export default function Sidebar() {
   return (
     <aside
       style={{ width: collapsed ? 64 : 224 }}
-      className="fixed left-0 top-0 bottom-0 bg-algo-900 border-r border-glass-border z-40 flex flex-col overflow-hidden transition-all duration-300"
+      className="fixed left-0 top-0 bottom-0 bg-secondary border-r border-border z-40 flex flex-col overflow-hidden transition-all duration-300"
     >
       {/* Logo */}
-      <div className={cn('flex items-center h-14 border-b border-glass-border shrink-0', collapsed ? 'justify-center px-0' : 'px-4 gap-2.5')}>
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-bright to-indigo-bright flex items-center justify-center shadow-lg shadow-purple-bright/20 shrink-0">
-          <span className="text-white font-bold text-sm">LT</span>
-        </div>
+      <div className={cn('flex items-center h-14 border-b border-border shrink-0', collapsed ? 'justify-center px-0' : 'px-4 gap-2.5')}>
+          <Logo size={32} />
         {!collapsed && (
-          <span className="text-sm font-bold text-white whitespace-nowrap">
-            LeetTrack
-          </span>
+          <span className="text-sm font-bold text-white whitespace-nowrap">CodeTrackr</span>
         )}
       </div>
 
@@ -48,8 +45,8 @@ export default function Sidebar() {
                 'flex items-center gap-3 rounded-lg transition-all duration-200',
                 collapsed ? 'justify-center h-10 w-10 mx-auto' : 'px-3 h-9',
                 isActive
-                  ? 'bg-purple-bright/12 text-purple-glow border border-purple-bright/20'
-                  : 'text-muted hover:text-white hover:bg-glass-hover',
+                  ? 'bg-primary/10 text-primary border border-primary/20'
+                  : 'text-muted hover:text-white hover:bg-hover',
               )
             }
             title={collapsed ? label : undefined}
@@ -63,9 +60,9 @@ export default function Sidebar() {
       </nav>
 
       {/* User section */}
-      <div className={cn('border-t border-glass-border py-3', collapsed ? 'px-2' : 'px-3')}>
+      <div className={cn('border-t border-border py-3', collapsed ? 'px-2' : 'px-3')}>
         <div className={cn('flex items-center gap-3 mb-2', collapsed ? 'justify-center' : '')}>
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-bright to-indigo-bright flex items-center justify-center text-[11px] font-bold text-white shrink-0">
+          <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-[11px] font-bold text-white shrink-0">
             {user?.username?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           {!collapsed && (
@@ -89,7 +86,7 @@ export default function Sidebar() {
           <button
             onClick={toggle}
             className={cn(
-              'flex items-center gap-2 rounded-lg text-sm font-medium text-muted hover:text-white hover:bg-glass-hover transition-all duration-200',
+              'flex items-center gap-2 rounded-lg text-sm font-medium text-muted hover:text-white hover:bg-hover transition-all duration-200',
               collapsed ? 'justify-center h-10 w-10' : 'px-3 h-8 flex-1',
             )}
             title={collapsed ? 'Expand' : 'Collapse'}

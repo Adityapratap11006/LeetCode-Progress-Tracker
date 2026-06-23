@@ -2,14 +2,10 @@ import { useState, useEffect } from 'react'
 import { RefreshCw, Calendar, CheckCircle2, TrendingUp, Clock } from 'lucide-react'
 import { getDueRevisions, getRevisionStats, completeRevision } from '../services/revisionService'
 import { Button } from '../components/ui/button'
-import { Card, CardContent } from '../components/ui/card'
+import { Card } from '../components/ui/card'
 import { Badge } from '../components/ui/badge'
 
-const badgeVariant = {
-  Easy: 'success',
-  Medium: 'warning',
-  Hard: 'danger',
-}
+const badgeVariant = { Easy: 'success', Medium: 'warning', Hard: 'danger' }
 
 function formatNextDate(dateStr) {
   if (!dateStr) return 'Today'
@@ -46,6 +42,7 @@ export default function Revisions() {
     }
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchData() }, [])
 
   const handleComplete = async (id) => {
@@ -68,9 +65,9 @@ export default function Revisions() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-algo-950 p-4 md:p-6 lg:p-8 max-w-5xl mx-auto flex items-center justify-center">
+      <div className="min-h-screen bg-base p-4 md:p-6 lg:p-8 max-w-5xl mx-auto flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-6 h-6 border-2 border-purple-bright border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           <span className="text-sm text-muted">Loading revisions...</span>
         </div>
       </div>
@@ -78,8 +75,7 @@ export default function Revisions() {
   }
 
   return (
-    <div className="min-h-screen bg-algo-950 p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
-      {/* Header */}
+    <div className="min-h-screen bg-base p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">Revisions</h1>
         <p className="text-sm text-muted mt-1">Spaced repetition keeps your problem-solving skills sharp</p>
@@ -89,7 +85,7 @@ export default function Revisions() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <Card className="p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex items-center gap-2 text-muted mb-3">
-            <Calendar className="w-4 h-4 text-purple-glow" />
+            <Calendar className="w-4 h-4 text-primary" />
             <span className="text-[11px] font-medium uppercase tracking-widest">Due Today</span>
           </div>
           <div className="flex items-baseline gap-2">
@@ -112,7 +108,7 @@ export default function Revisions() {
 
         <Card className="p-5 flex flex-col justify-center min-h-[140px]">
           <div className="flex items-center gap-2 text-muted mb-3">
-            <TrendingUp className="w-4 h-4 text-indigo-bright" />
+            <TrendingUp className="w-4 h-4 text-accent" />
             <span className="text-[11px] font-medium uppercase tracking-widest">Queue</span>
           </div>
           <div className="flex items-baseline gap-2">
@@ -126,25 +122,20 @@ export default function Revisions() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold text-white">Active Queue</h2>
         {dueProblems.length > 0 && (
-          <span className="text-xs text-muted bg-glass px-2 py-0.5 rounded-full border border-glass-border">
+          <span className="text-xs text-muted bg-surface px-2 py-0.5 rounded-full border border-border">
             {dueProblems.length} item{dueProblems.length !== 1 ? 's' : ''}
           </span>
         )}
       </div>
 
       {dueProblems.length > 0 ? (
-        <div className="divide-y divide-glass-border border border-glass-border rounded-xl overflow-hidden">
+        <div className="divide-y divide-border border border-border rounded-xl overflow-hidden">
           {dueProblems.map((problem) => (
-            <div
-              key={problem._id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 gap-4 hover:bg-glass-hover transition-colors"
-            >
+            <div key={problem._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 gap-4 hover:bg-hover transition-colors">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-1.5">
                   <h3 className="text-sm font-medium text-white truncate">{problem.title}</h3>
-                  <Badge variant={badgeVariant[problem.difficulty] || 'default'}>
-                    {problem.difficulty}
-                  </Badge>
+                  <Badge variant={badgeVariant[problem.difficulty] || 'default'}>{problem.difficulty}</Badge>
                 </div>
                 <div className="flex items-center gap-4 text-xs text-muted">
                   <div className="flex items-center gap-1">
@@ -158,11 +149,7 @@ export default function Revisions() {
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <Button
-                  onClick={() => handleComplete(problem._id)}
-                  disabled={completing === problem._id}
-                  size="sm"
-                >
+                <Button onClick={() => handleComplete(problem._id)} disabled={completing === problem._id} size="sm">
                   {completing === problem._id ? (
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                   ) : (

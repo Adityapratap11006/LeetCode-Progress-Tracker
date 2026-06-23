@@ -6,7 +6,7 @@ export default function AppLayout() {
   const { collapsed } = useSidebar()
 
   return (
-    <div className="flex min-h-screen bg-algo-950">
+    <div className="flex min-h-screen bg-base">
       <Sidebar />
       <main
         style={{ marginLeft: collapsed ? 64 : 224 }}

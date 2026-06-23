@@ -32,7 +32,7 @@ export function NumberInput({ value, onChange, min = 0, max, label, className })
           type="button"
           onClick={decrement}
           disabled={value <= min}
-          className="flex items-center justify-center w-9 h-full rounded-l-lg border border-glass-border border-r-0 bg-glass hover:bg-glass-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors active:scale-95"
+          className="flex items-center justify-center w-9 h-full rounded-l-lg border border-border border-r-0 bg-surface hover:bg-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors active:scale-95"
         >
           <Minus className="w-3.5 h-3.5 text-muted" />
         </button>
@@ -41,13 +41,13 @@ export function NumberInput({ value, onChange, min = 0, max, label, className })
           inputMode="numeric"
           value={value ?? 0}
           onChange={handleInputChange}
-          className="flex-1 h-full text-center text-sm text-white bg-glass border-y border-glass-border outline-none focus:bg-glass-hover transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="flex-1 h-full text-center text-sm text-white bg-surface border-y border-border outline-none focus:bg-hover transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
         <button
           type="button"
           onClick={increment}
           disabled={max !== undefined && value >= max}
-          className="flex items-center justify-center w-9 h-full rounded-r-lg border border-glass-border border-l-0 bg-glass hover:bg-glass-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors active:scale-95"
+          className="flex items-center justify-center w-9 h-full rounded-r-lg border border-border border-l-0 bg-surface hover:bg-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors active:scale-95"
         >
           <Plus className="w-3.5 h-3.5 text-muted" />
         </button>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Save, AlertCircle } from 'lucide-react'
 import { updateProblem } from '../services/problemService'
@@ -11,28 +11,15 @@ const STATUSES = ['Solved', 'Attempted', 'Need Review']
 
 export default function EditProblemForm({ problem, onClose, onSuccess }) {
   const [form, setForm] = useState({
-    status: 'Attempted',
-    notes: '',
-    language: '',
-    timeSpentMinutes: 0,
-    attemptCount: 1,
-    revisionCount: 0,
+    status: problem?.status || 'Attempted',
+    notes: problem?.notes || '',
+    language: problem?.language || '',
+    timeSpentMinutes: problem?.timeSpentMinutes || 0,
+    attemptCount: problem?.attemptCount || 1,
+    revisionCount: problem?.revisionCount || 0,
   })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
-
-  useEffect(() => {
-    if (problem) {
-      setForm({
-        status: problem.status || 'Attempted',
-        notes: problem.notes || '',
-        language: problem.language || '',
-        timeSpentMinutes: problem.timeSpentMinutes || 0,
-        attemptCount: problem.attemptCount || 1,
-        revisionCount: problem.revisionCount || 0,
-      })
-    }
-  }, [problem])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -63,7 +50,7 @@ export default function EditProblemForm({ problem, onClose, onSuccess }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -127,7 +114,7 @@ export default function EditProblemForm({ problem, onClose, onSuccess }) {
                   value={form.notes}
                   onChange={handleChange}
                   rows={3}
-                  className="flex w-full rounded-lg border border-glass-border bg-glass px-3 py-2 text-sm text-white placeholder:text-muted/40 focus:outline-none focus:border-purple-bright/40 focus:ring-1 focus:ring-purple-bright/20 transition-all duration-200 resize-none"
+                  className="flex w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-white placeholder:text-muted/40 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all duration-200 resize-none"
                   placeholder="Any notes about this problem..."
                 />
               </div>

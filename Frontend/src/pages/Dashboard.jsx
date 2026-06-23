@@ -12,10 +12,11 @@ import { Button } from '../components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card'
 
 const greetings = () => {
-  const h = new Date().getHours()
+  const h = parseInt(new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false }))
   if (h < 12) return 'Good morning'
-  if (h < 18) return 'Good afternoon'
-  return 'Good evening'
+  if (h < 17) return 'Good afternoon'
+  if (h < 21) return 'Good evening'
+  return 'Good night'
 }
 
 const DAYS = 364
@@ -24,9 +25,7 @@ const HEATMAP_COLS = 52
 function generateHeatmapData(activityData) {
   const activityMap = {}
   if (activityData && activityData.length) {
-    activityData.forEach(({ date, count }) => {
-      activityMap[date] = count
-    })
+    activityData.forEach(({ date, count }) => { activityMap[date] = count })
   }
   const cells = []
   const today = new Date()
@@ -43,14 +42,14 @@ function generateHeatmapData(activityData) {
 }
 
 function getLevelColor(level) {
-  const colors = ['bg-white/[0.03]', 'bg-success/15', 'bg-success/30', 'bg-success/50', 'bg-success/70']
+  const colors = ['bg-hover', 'bg-primary/20', 'bg-primary/40', 'bg-primary/60', 'bg-primary']
   return colors[level] || colors[0]
 }
 
 function CustomTooltip({ active, payload, label }) {
   if (active && payload?.length) {
     return (
-      <div className="bg-algo-800 border border-glass-border rounded-lg px-3 py-2 text-sm shadow-xl">
+      <div className="bg-surface border border-border rounded-lg px-3 py-2 text-sm shadow-xl">
         <p className="text-white font-medium">{label}</p>
         <p className="text-muted">{payload[0].value} problems</p>
       </div>
@@ -88,6 +87,7 @@ export default function Dashboard() {
     }
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchData() }, [])
 
   const totalSolved = stats?.solvedProblems ?? 0
@@ -114,16 +114,16 @@ export default function Dashboard() {
   })()
 
   const statCards = [
-    { icon: Zap, label: 'Current Streak', value: `${streak} day${streak !== 1 ? 's' : ''}`, color: 'text-purple-glow' },
+    { icon: Zap, label: 'Current Streak', value: `${streak} day${streak !== 1 ? 's' : ''}`, color: 'text-primary' },
     { icon: CheckCircle2, label: 'Total Solved', value: totalSolved, color: 'text-success' },
     { icon: Target, label: 'Easy', value: easyCount, color: 'text-success' },
     { icon: TrendingUp, label: 'Medium', value: mediumCount, color: 'text-warning' },
     { icon: BarChart3, label: 'Hard', value: hardCount, color: 'text-danger' },
-    { icon: Timer, label: 'Time Spent', value: timeDisplay, color: 'text-purple-glow' },
+    { icon: Timer, label: 'Time Spent', value: timeDisplay, color: 'text-accent' },
   ]
 
   return (
-    <div className="min-h-screen bg-algo-950 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-base p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Welcome Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
@@ -164,7 +164,6 @@ export default function Dashboard() {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Weekly Progress Chart */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Weekly Progress</CardTitle>
@@ -173,17 +172,16 @@ export default function Dashboard() {
             <div className="h-[220px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={weeklyData} margin={{ top: 5, right: 10, left: -15, bottom: 5 }}>
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} allowDecimals={false} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} allowDecimals={false} />
                   <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
-                  <Bar dataKey="count" radius={[4, 4, 0, 0]} fill="#8b5cf6" maxBarSize={32} />
+                  <Bar dataKey="count" radius={[4, 4, 0, 0]} fill="#10b981" maxBarSize={32} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
 
-        {/* Quick Stats */}
         <Card>
           <CardHeader>
             <CardTitle>Difficulty Breakdown</CardTitle>
@@ -199,7 +197,7 @@ export default function Dashboard() {
                   <span className="text-sm text-muted">{label}</span>
                   <span className="text-sm font-medium text-white">{count}</span>
                 </div>
-                <div className="h-2 bg-glass rounded-full overflow-hidden">
+                <div className="h-2 bg-hover rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${color}`}
                     style={{ width: `${(count / total) * 100}%` }}
@@ -227,7 +225,7 @@ export default function Dashboard() {
                     return (
                       <div
                         key={rowIdx}
-                        className={`w-3 h-3 rounded-sm ${cell ? getLevelColor(cell.level) : 'bg-white/[0.03]'}`}
+                        className={`w-3 h-3 rounded-sm ${cell ? getLevelColor(cell.level) : 'bg-hover'}`}
                         title={cell ? `${cell.date}: ${cell.count} solved` : ''}
                       />
                     )
@@ -258,15 +256,15 @@ export default function Dashboard() {
           {loading ? (
             <div className="p-6 space-y-4">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-10 bg-glass rounded-lg animate-pulse" />
+                <div key={i} className="h-10 bg-hover rounded-lg animate-pulse" />
               ))}
             </div>
           ) : recent.length > 0 ? (
-            <div className="divide-y divide-glass-border">
+            <div className="divide-y divide-border">
               {recent.map((p) => (
                 <div
                   key={p._id}
-                  className="flex items-center justify-between px-6 py-3.5 hover:bg-glass-hover transition-colors"
+                  className="flex items-center justify-between px-6 py-3.5 hover:bg-hover transition-colors"
                 >
                   <span className="text-sm font-medium text-white truncate mr-4">{p.title}</span>
                   <div className="flex items-center gap-2 shrink-0">
@@ -288,11 +286,11 @@ export default function Dashboard() {
 
       {/* Add Problem Dialog */}
       {showAdd && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg rounded-2xl border border-glass-border bg-algo-800 shadow-2xl p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
+          <div className="relative w-full max-w-lg rounded-xl border border-border bg-surface shadow-xl p-6">
             <button
               onClick={() => setShowAdd(false)}
-              className="absolute top-4 right-4 p-1 rounded-lg text-muted hover:text-white hover:bg-glass-hover transition-colors"
+              className="absolute top-4 right-4 p-1 rounded-lg text-muted hover:text-white hover:bg-hover transition-colors"
             >
               <span className="text-lg">&times;</span>
             </button>
