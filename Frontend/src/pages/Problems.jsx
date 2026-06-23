@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { motion } from 'framer-motion'
-import { Search, Plus, RefreshCw, Trash2, Edit3, ExternalLink } from 'lucide-react'
+import { Search, Plus, RefreshCw, Trash2, Edit3, ExternalLink, FileText } from 'lucide-react'
 import { getProblems, deleteProblem } from '../services/problemService'
 import AddProblemForm from '../components/AddProblemForm'
 import EditProblemForm from '../components/EditProblemForm'
@@ -49,18 +48,13 @@ function Chip({ label, active, onClick }) {
       onClick={onClick}
       className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border ${
         active
-          ? 'bg-purple-bright/12 text-purple-glow border-purple-bright/25 shadow-sm shadow-purple-bright/10'
+          ? 'bg-purple-bright/12 text-purple-glow border-purple-bright/25'
           : 'text-muted border-glass-border hover:text-white hover:bg-glass-hover'
       }`}
     >
       {label}
     </button>
   )
-}
-
-const rowVariant = {
-  hidden: { opacity: 0, y: 8 },
-  show: { opacity: 1, y: 0 },
 }
 
 export default function Problems() {
@@ -72,10 +66,12 @@ export default function Problems() {
   const [sort, setSort] = useState('-createdAt')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [total, setTotal] = useState(0)
   const [limit, setLimit] = useState(10)
   const [showAdd, setShowAdd] = useState(false)
   const [editProblem, setEditProblem] = useState(null)
   const [deleting, setDeleting] = useState(null)
+  const [showNotes, setShowNotes] = useState(null)
 
   const fetchProblems = useCallback(async () => {
     setLoading(true)
@@ -87,6 +83,7 @@ export default function Problems() {
       const data = await getProblems(params)
       setProblems(data.problems ?? data)
       setTotalPages(data.totalPages ?? 1)
+      setTotal(data.total ?? 0)
     } catch {
       // handled by interceptor
     } finally {
@@ -110,33 +107,30 @@ export default function Problems() {
   }
 
   return (
-    <div className="min-h-screen bg-algo-950 p-6 lg:p-8 max-w-7xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between mb-6"
-      >
+    <div className="min-h-screen bg-algo-950 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">Problems</h1>
           <p className="text-sm text-muted mt-1">Manage and track your LeetCode problems</p>
         </div>
-        <Button onClick={() => setShowAdd(true)} className="shadow-lg shadow-purple-bright/25">
+        <Button onClick={() => setShowAdd(true)}>
           <Plus className="w-4 h-4" />
           Add Problem
         </Button>
-      </motion.div>
+      </div>
 
       {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="glass-card p-4 mb-6"
-      >
+      <Card className="p-4 mb-6">
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
-            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by title..." className="pl-9" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by title..."
+              className="pl-9"
+            />
           </div>
           <Select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="min-w-[140px]">
             {DIFFICULTIES.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
@@ -152,7 +146,6 @@ export default function Problems() {
           </Button>
         </div>
 
-        {/* Chips */}
         <div className="flex flex-wrap gap-2">
           {['All', 'Easy', 'Medium', 'Hard'].map((d) => (
             <Chip key={d} label={d === 'All' ? 'All' : d} active={difficulty === d} onClick={() => setDifficulty(d)} />
@@ -162,19 +155,19 @@ export default function Problems() {
             <Chip key={s} label={s === 'All' ? 'All Statuses' : s} active={status === s} onClick={() => setStatus(s)} />
           ))}
         </div>
-      </motion.div>
+      </Card>
 
-      {/* Table */}
-      <motion.div initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.03 } } }}>
-        <Card>
-          <CardContent className="p-0">
-            {loading ? (
-              <div className="p-6 space-y-4">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-12 glass rounded-lg animate-pulse" />
-                ))}
-              </div>
-            ) : problems.length > 0 ? (
+      {/* Desktop Table */}
+      <Card className="hidden md:block">
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="p-6 space-y-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-12 bg-glass rounded-lg animate-pulse" />
+              ))}
+            </div>
+          ) : problems.length > 0 ? (
+            <>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -182,25 +175,22 @@ export default function Problems() {
                       <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Title</th>
                       <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Difficulty</th>
                       <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Status</th>
-                      <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted hidden md:table-cell">Time</th>
-                      <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted hidden md:table-cell">Language</th>
+                      <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Tags</th>
+                      <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Language</th>
+                      <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Time</th>
+                      <th className="text-left px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Attempts</th>
                       <th className="text-right px-6 py-4 text-[11px] font-medium uppercase tracking-widest text-muted">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-glass-border">
-                    {problems.map((p, i) => (
-                      <motion.tr
-                        key={p._id}
-                        variants={rowVariant}
-                        transition={{ duration: 0.3, delay: i * 0.03 }}
-                        className="group hover:bg-glass-hover transition-colors"
-                      >
+                    {problems.map((p) => (
+                      <tr key={p._id} className="group hover:bg-glass-hover transition-colors">
                         <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-white">{p.title}</span>
+                          <div className="flex items-center gap-2 max-w-[240px]">
+                            <span className="text-sm font-medium text-white truncate">{p.title}</span>
                             {p.leetcodeLink && (
                               <a href={p.leetcodeLink} target="_blank" rel="noopener noreferrer"
-                                className="text-muted hover:text-purple-glow transition-colors opacity-0 group-hover:opacity-100">
+                                className="text-muted hover:text-purple-glow transition-colors shrink-0">
                                 <ExternalLink className="w-3.5 h-3.5" />
                               </a>
                             )}
@@ -212,14 +202,34 @@ export default function Problems() {
                         <td className="px-6 py-4">
                           <Badge variant={badgeVariant[p.status] || 'default'}>{p.status}</Badge>
                         </td>
-                        <td className="px-6 py-4 text-muted hidden md:table-cell">
-                          {p.timeSpentMinutes ? `${p.timeSpentMinutes}m` : '—'}
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-1 max-w-[160px]">
+                            {p.tags?.length > 0 ? (
+                              p.tags.slice(0, 2).map((tag) => (
+                                <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-glass text-muted border border-glass-border">
+                                  {tag}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-xs text-muted">—</span>
+                            )}
+                            {p.tags?.length > 2 && (
+                              <span className="text-[10px] text-muted">+{p.tags.length - 2}</span>
+                            )}
+                          </div>
                         </td>
-                        <td className="px-6 py-4 text-muted hidden md:table-cell">
-                          {p.language || '—'}
-                        </td>
+                        <td className="px-6 py-4 text-muted">{p.language || '—'}</td>
+                        <td className="px-6 py-4 text-muted">{p.timeSpentMinutes ? `${p.timeSpentMinutes}m` : '—'}</td>
+                        <td className="px-6 py-4 text-muted">{p.attemptCount || '—'}</td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost" size="icon"
+                              onClick={() => setShowNotes(showNotes === p._id ? null : p._id)}
+                              title="Notes"
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                            </Button>
                             <Button variant="ghost" size="icon" onClick={() => setEditProblem(p)} title="Edit">
                               <Edit3 className="w-3.5 h-3.5" />
                             </Button>
@@ -234,37 +244,115 @@ export default function Problems() {
                             </Button>
                           </div>
                         </td>
-                      </motion.tr>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-            ) : (
-              <div className="p-12 text-center">
-                <p className="text-muted text-sm">No problems found</p>
-                <Button variant="secondary" className="mt-4" onClick={() => setShowAdd(true)}>
-                  <Plus className="w-4 h-4" />
-                  Add your first problem
-                </Button>
+
+              {/* Notes Panel */}
+              {showNotes && (
+                <div className="border-t border-glass-border px-6 py-4 bg-algo-900/50">
+                  <p className="text-xs text-muted mb-1">Notes for <span className="text-white font-medium">{problems.find(p => p._id === showNotes)?.title}</span></p>
+                  <p className="text-sm text-white">{problems.find(p => p._id === showNotes)?.notes || 'No notes added.'}</p>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="p-12 text-center">
+              <p className="text-muted text-sm">No problems found</p>
+              <Button variant="secondary" className="mt-4" onClick={() => setShowAdd(true)}>
+                <Plus className="w-4 h-4" />
+                Add your first problem
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-3">
+        {loading ? (
+          [...Array(4)].map((_, i) => (
+            <div key={i} className="h-28 bg-glass rounded-lg animate-pulse" />
+          ))
+        ) : problems.length > 0 ? (
+          problems.map((p) => (
+            <Card key={p._id} className="p-4">
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm font-medium text-white truncate">{p.title}</span>
+                    {p.leetcodeLink && (
+                      <a href={p.leetcodeLink} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-purple-glow shrink-0">
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    <Badge variant={badgeVariant[p.difficulty] || 'default'}>{p.difficulty}</Badge>
+                    <Badge variant={badgeVariant[p.status] || 'default'}>{p.status}</Badge>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button variant="ghost" size="icon" onClick={() => setShowNotes(showNotes === p._id ? null : p._id)} title="Notes">
+                    <FileText className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => setEditProblem(p)} title="Edit">
+                    <Edit3 className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button
+                    variant="ghost" size="icon"
+                    onClick={() => handleDelete(p)}
+                    className="hover:text-danger hover:bg-danger/10"
+                    disabled={deleting === p._id}
+                  >
+                    <Trash2 className={`w-3.5 h-3.5 ${deleting === p._id ? 'animate-spin' : ''}`} />
+                  </Button>
+                </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </motion.div>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+                {p.language && <span>Lang: {p.language}</span>}
+                {p.timeSpentMinutes ? <span>Time: {p.timeSpentMinutes}m</span> : null}
+                {p.attemptCount ? <span>Attempts: {p.attemptCount}</span> : null}
+              </div>
+              {p.tags?.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {p.tags.map((tag) => (
+                    <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-glass text-muted border border-glass-border">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {showNotes === p._id && (
+                <div className="mt-2 pt-2 border-t border-glass-border">
+                  <p className="text-xs text-muted mb-1">Notes:</p>
+                  <p className="text-xs text-white">{p.notes || 'No notes added.'}</p>
+                </div>
+              )}
+            </Card>
+          ))
+        ) : (
+          <div className="p-12 text-center">
+            <p className="text-muted text-sm">No problems found</p>
+            <Button variant="secondary" className="mt-4" onClick={() => setShowAdd(true)}>
+              <Plus className="w-4 h-4" />
+              Add your first problem
+            </Button>
+          </div>
+        )}
+      </div>
 
       {/* Pagination */}
       {problems.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="flex items-center justify-between mt-6 flex-wrap gap-4"
-        >
+        <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted">Rows per page:</span>
             <Select value={String(limit)} onChange={(e) => setLimit(Number(e.target.value))} className="min-w-[70px]">
               {PAGE_SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
             </Select>
+            <span className="text-xs text-muted ml-2">{total} total</span>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
@@ -275,7 +363,7 @@ export default function Problems() {
               Next
             </Button>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {showAdd && <AddProblemForm onClose={() => setShowAdd(false)} onSuccess={fetchProblems} />}

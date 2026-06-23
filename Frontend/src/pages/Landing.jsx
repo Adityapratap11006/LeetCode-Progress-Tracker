@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles, LayoutDashboard } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 import AuroraBackground from '../components/AuroraBackground'
 import Particles from '../components/Particles'
 import FeaturesSection from '../components/FeaturesSection'
@@ -11,6 +12,7 @@ import Footer from '../components/Footer'
 import { Button } from '../components/ui/button'
 
 export default function Landing() {
+  const { user } = useAuth()
   return (
     <div className="relative min-h-screen bg-algo-950 overflow-hidden">
       <AuroraBackground />
@@ -33,14 +35,25 @@ export default function Landing() {
             <span className="text-sm font-bold text-white">AlgoForge</span>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/login">
-              <Button variant="ghost" size="sm">Login</Button>
-            </Link>
-            <Link to="/register">
-              <Button size="sm" className="shadow-lg shadow-purple-bright/20">
-                Get Started <ArrowRight className="w-3.5 h-3.5" />
-              </Button>
-            </Link>
+            {user ? (
+              <Link to="/dashboard">
+                <Button size="sm">
+                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">Sign In</Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="sm" className="shadow-lg shadow-purple-bright/20">
+                    Get Started <ArrowRight className="w-3.5 h-3.5" />
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </motion.nav>
@@ -86,17 +99,28 @@ export default function Landing() {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
             className="flex items-center justify-center gap-3 mt-8"
           >
-            <Link to="/register">
-              <Button size="xl" className="shadow-lg shadow-purple-bright/30">
-                Get Started Free
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
-            <Link to="/login">
-              <Button variant="outline" size="xl">
-                Sign In
-              </Button>
-            </Link>
+            {user ? (
+              <Link to="/dashboard">
+                <Button size="xl" className="shadow-lg shadow-purple-bright/30">
+                  <LayoutDashboard className="w-4 h-4" />
+                  Go to Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/register">
+                  <Button size="xl" className="shadow-lg shadow-purple-bright/30">
+                    Get Started Free
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <Link to="/login">
+                  <Button variant="outline" size="xl">
+                    Sign In
+                  </Button>
+                </Link>
+              </>
+            )}
           </motion.div>
 
           {/* Stats mini bar */}

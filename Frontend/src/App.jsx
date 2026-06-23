@@ -7,6 +7,10 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Problems from './pages/Problems'
+import StudyLists from './pages/StudyLists'
+import Revisions from './pages/Revisions'
+import Analytics from './pages/Analytics'
+import Settings from './pages/Settings'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -44,6 +48,10 @@ function AppRoutes() {
       <Route element={<ProtectedRoute><SidebarProvider><AppLayout /></SidebarProvider></ProtectedRoute>}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/problems" element={<Problems />} />
+        <Route path="/studylists" element={<StudyLists />} />
+        <Route path="/revisions" element={<Revisions />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

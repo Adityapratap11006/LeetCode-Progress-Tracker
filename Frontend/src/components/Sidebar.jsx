@@ -1,20 +1,19 @@
 import { NavLink } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import {
-  LayoutDashboard, ListTodo, BookOpen, RefreshCw, BarChart3, Settings,
-  LogOut, ChevronLeft, ChevronRight, Sparkles,
-} from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useSidebar } from '../context/SidebarContext'
 import { cn } from '../lib/utils'
+import {
+  LayoutDashboard, ListTodo, BookOpen, RefreshCw, BarChart3, Settings,
+  LogOut, ChevronLeft, ChevronRight,
+} from 'lucide-react'
 
 const links = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/problems', label: 'Problems', icon: ListTodo },
-  { to: '#', label: 'Study Lists', icon: BookOpen },
-  { to: '#', label: 'Revisions', icon: RefreshCw },
-  { to: '#', label: 'Analytics', icon: BarChart3 },
-  { to: '#', label: 'Settings', icon: Settings },
+  { to: '/studylists', label: 'Study Lists', icon: BookOpen },
+  { to: '/revisions', label: 'Revisions', icon: RefreshCw },
+  { to: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { to: '/settings', label: 'Settings', icon: Settings },
 ]
 
 export default function Sidebar() {
@@ -22,28 +21,20 @@ export default function Sidebar() {
   const { user, logout } = useAuth()
 
   return (
-    <motion.aside
-      animate={{ width: collapsed ? 64 : 224 }}
-      transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-      className="fixed left-0 top-0 bottom-0 bg-algo-900/90 backdrop-blur-xl border-r border-glass-border z-40 flex flex-col overflow-hidden"
+    <aside
+      style={{ width: collapsed ? 64 : 224 }}
+      className="fixed left-0 top-0 bottom-0 bg-algo-900 border-r border-glass-border z-40 flex flex-col overflow-hidden transition-all duration-300"
     >
       {/* Logo */}
       <div className={cn('flex items-center h-14 border-b border-glass-border shrink-0', collapsed ? 'justify-center px-0' : 'px-4 gap-2.5')}>
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-bright to-indigo-bright flex items-center justify-center shadow-lg shadow-purple-bright/20 shrink-0">
-          <Sparkles className="w-4 h-4 text-white" />
+          <span className="text-white font-bold text-sm">LT</span>
         </div>
-        <AnimatePresence>
-          {!collapsed && (
-            <motion.span
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: 'auto' }}
-              exit={{ opacity: 0, width: 0 }}
-              className="text-sm font-bold text-white whitespace-nowrap"
-            >
-              AlgoForge
-            </motion.span>
-          )}
-        </AnimatePresence>
+        {!collapsed && (
+          <span className="text-sm font-bold text-white whitespace-nowrap">
+            LeetTrack
+          </span>
+        )}
       </div>
 
       {/* Nav links */}
@@ -54,7 +45,7 @@ export default function Sidebar() {
             to={to}
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-3 rounded-lg transition-all duration-200 relative group',
+                'flex items-center gap-3 rounded-lg transition-all duration-200',
                 collapsed ? 'justify-center h-10 w-10 mx-auto' : 'px-3 h-9',
                 isActive
                   ? 'bg-purple-bright/12 text-purple-glow border border-purple-bright/20'
@@ -64,18 +55,9 @@ export default function Sidebar() {
             title={collapsed ? label : undefined}
           >
             <Icon className="w-4 h-4 shrink-0" />
-            <AnimatePresence>
-              {!collapsed && (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="text-sm whitespace-nowrap"
-                >
-                  {label}
-                </motion.span>
-              )}
-            </AnimatePresence>
+            {!collapsed && (
+              <span className="text-sm whitespace-nowrap">{label}</span>
+            )}
           </NavLink>
         ))}
       </nav>
@@ -86,18 +68,11 @@ export default function Sidebar() {
           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-bright to-indigo-bright flex items-center justify-center text-[11px] font-bold text-white shrink-0">
             {user?.username?.charAt(0)?.toUpperCase() || 'U'}
           </div>
-          <AnimatePresence>
-            {!collapsed && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-sm text-muted truncate"
-              >
-                {user?.username || 'User'}
-              </motion.span>
-            )}
-          </AnimatePresence>
+          {!collapsed && (
+            <span className="text-sm text-muted truncate">
+              {user?.username || 'User'}
+            </span>
+          )}
         </div>
 
         <div className={cn('flex', collapsed ? 'flex-col items-center gap-1' : 'gap-1')}>
@@ -123,6 +98,6 @@ export default function Sidebar() {
           </button>
         </div>
       </div>
-    </motion.aside>
+    </aside>
   )
 }

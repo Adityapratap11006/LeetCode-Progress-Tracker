@@ -36,3 +36,8 @@ export const getStreak = async () => {
   const { data } = await axios.get(`${API_URL}/streak`)
   return data
 }
+
+export const getHeatmap = async () => {
+  const { data } = await axios.get(`${API_URL}/heatmap`)
+  return data
+}
