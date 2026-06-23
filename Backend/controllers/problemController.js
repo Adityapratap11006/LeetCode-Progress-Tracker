@@ -1,21 +1,32 @@
 const Problem = require("../models/Problem");
+const mongoose = require("mongoose");
 
 const addProblem = async (req, res) => {
     try {
         const {
             title,
             difficulty,
+            status,
             topic,
             leetcodeLink
         } = req.body;
 
-        const problem = await Problem.create({
+        const problemData = {
             title,
             difficulty,
             topic,
             leetcodeLink,
             user: req.user.id
-        });
+        };
+
+        if (status) {
+            problemData.status = status;
+            if (status === 'Solved') {
+                problemData.solvedAt = new Date();
+            }
+        }
+
+        const problem = await Problem.create(problemData);
 
         res.status(201).json(problem);
 
@@ -28,35 +39,42 @@ const addProblem = async (req, res) => {
 
 const getProblems = async (req, res) => {
     try {
-
         const {difficulty,status,topic,search,sort,page,limit}=req.query;
 
-const filter={user:req.user.id};
-if(difficulty){
-    filter.difficulty=difficulty
-}
-if(status){
-    filter.status=status
-}
-if(search){
-    filter.title={
-        $regex:search,
-        $options:"i"
-    };
-}
-const pageNumber = parseInt(page) || 1;
-const limitNumber = parseInt(limit) || 5;
-const problems = await Problem.find(filter)
-    .sort(sort)
-    .skip((pageNumber - 1) * limitNumber)
-    .limit(limitNumber);
-res.status(200).json(problems);
+        const filter={user:req.user.id};
+        if(difficulty){
+            filter.difficulty=difficulty
+        }
+        if(status){
+            filter.status=status
+        }
+        if(search){
+            filter.title={
+                $regex:search,
+                $options:"i"
+            };
+        }
+        const pageNumber = parseInt(page) || 1;
+        const limitNumber = parseInt(limit) || 10;
+        const total = await Problem.countDocuments(filter);
+        const problems = await Problem.find(filter)
+            .sort(sort || '-createdAt')
+            .skip((pageNumber - 1) * limitNumber)
+            .limit(limitNumber);
+        const totalPages = Math.ceil(total / limitNumber);
 
-}catch(err){
-    res.status(500).json({
+        res.status(200).json({
+            problems,
+            totalPages,
+            currentPage: pageNumber,
+            total
+        });
+
+    }catch(err){
+        res.status(500).json({
             message: err.message
         });
-}
+    }
 }
 const getStats = async (req, res) => {
     try {
@@ -214,8 +232,8 @@ const dates = solvedProblems.map(problem =>
  const uniqueDates = [...new Set(dates)];
 
         uniqueDates.sort().reverse();
-        console.log(uniqueDates);
-console.log(new Date().toISOString().split("T")[0]);
+ 
+
         let streak=0;
         let currentDate=new Date();
         while(true){
@@ -239,7 +257,44 @@ console.log(new Date().toISOString().split("T")[0]);
         });
     }
 }
+const getHeatmap = async (req, res) => {
+    try {
+        const heatmapData = await Problem.aggregate([
+            {
+                $match: {
+                    user: new mongoose.Types.ObjectId(req.user.id),
+                    status: "Solved",
+                    solvedAt: { $ne: null }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: {
+                            format: "%Y-%m-%d",
+                            date: "$solvedAt"
+                        }
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } },
+            {
+                $project: {
+                    _id: 0,
+                    date: "$_id",
+                    count: 1
+                }
+            }
+        ]);
+        res.status(200).json(heatmapData);
+    } catch (err) {
+        res.status(500).json({
+            message: err.message
+        });
+    }
+};
 module.exports = {
-    addProblem,getStreak,
+    addProblem,getStreak,getHeatmap,
     getProblems,updateProblem,deleteProblem,getStats,getProblemById
 };

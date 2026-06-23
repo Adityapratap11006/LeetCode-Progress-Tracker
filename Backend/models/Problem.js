@@ -54,10 +54,20 @@ const problemSchema = new mongoose.Schema(
         default: 0
     },
 
-   solvedAt: {
+    solvedAt: {
     type: Date,
     default: null
 },
+
+    lastRevisionDate: {
+        type: Date,
+        default: null
+    },
+
+    nextRevisionDate: {
+        type: Date,
+        default: null
+    },
 
     user: {
         type: mongoose.Schema.Types.ObjectId,
