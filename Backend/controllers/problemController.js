@@ -134,6 +134,9 @@ const updateProblem=async(req,res)=>{
             });
 
     }
+    if (req.body.status === "Solved") {
+    req.body.solvedAt = new Date();
+}
     const updatedProblem=await Problem.findByIdAndUpdate(
         req.params.id,
         req.body,
@@ -210,7 +213,25 @@ const dates = solvedProblems.map(problem =>
 );
  const uniqueDates = [...new Set(dates)];
 
-        uniqueDates.sort();
+        uniqueDates.sort().reverse();
+        console.log(uniqueDates);
+console.log(new Date().toISOString().split("T")[0]);
+        let streak=0;
+        let currentDate=new Date();
+        while(true){
+                const dateString = currentDate.toISOString().split("T")[0];
+                if(uniqueDates.includes(dateString)){
+                    streak++;
+                    currentDate.setDate(currentDate.getDate()-1);
+
+                }
+                else{
+                    break;
+                }
+        }
+        res.status(200).json({
+    streak
+});
     }
     catch(err){
           res.status(500).json({
@@ -219,6 +240,6 @@ const dates = solvedProblems.map(problem =>
     }
 }
 module.exports = {
-    addProblem,
+    addProblem,getStreak,
     getProblems,updateProblem,deleteProblem,getStats,getProblemById
 };

@@ -4,9 +4,10 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const {
     addProblem,getProblems,updateProblem,
-    deleteProblem,getStats,getProblemById
+    deleteProblem,getStats,getProblemById,getStreak
 } = require("../controllers/problemController");
 router.get("/stats", authMiddleware, getStats);
+router.get("/streak",authMiddleware, getStreak);
 router.post(
     "/",
     authMiddleware,
